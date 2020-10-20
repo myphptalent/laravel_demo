@@ -22,3 +22,7 @@ Route::get('/', function () {
 });
 
 Route::resource('shows', 'ShowController');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

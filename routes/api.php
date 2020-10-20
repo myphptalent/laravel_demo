@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('showlist', 'ShowController@showlist');
 Route::get('showlist/{id}', 'ShowController@showlistByID');
 Route::post('showlist', 'ShowController@showlistSave');
+Route::put('showlist/{id}', 'ShowController@showlistUpdate');
+Route::delete('showlist/{show}', 'ShowController@showlistDelete');

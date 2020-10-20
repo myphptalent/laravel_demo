@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Show;
+use Validator;
 
 class ShowController extends Controller
 {
@@ -101,17 +102,62 @@ class ShowController extends Controller
         $show->delete();
         return redirect('/shows')->with('success', 'Show is successfully deleted');
     }
+    ////////////////////// APIS functions---////////////////////////////////////
     
     public function showlist() {
 		return response()->json(Show::get(), 200);
 	}
 	
 	public function showlistByID($id) {
+		$show = Show::find($id);
+		if (is_null($show)) {
+			return response()->json(["message" => 'Record not found!'], 404);
+		}
 		return response()->json(show::find($id), 200);
 	}
+	
     public function showlistSave(Request $request) {
+		$rules = [
+		'show_name' =>'required|max:255|unique:shows',
+		'genre' => 'required|max:255',
+		'imdb_rating' => 'required|numeric',
+		'lead_actor' => 'required|max:255',
+		];
+		$validator = Validator::make($request->all(), $rules);
+		if ($validator->fails()) {
+		    return response()->json($validator->errors(), 400);
+		}    
 		$showlist = Show::create($request->all());
 		return response()->json($showlist, 201);
 	}
+	
+	public function showlistUpdate(Request $request, $id) {
+		$show = Show::find($id);
+		if (is_null($show)) { 
+			return response()->json(["message" => 'Record not found!'], 404);
+		}
+		/*$rules = [
+		'show_name' =>'required|max:255|unique:shows',
+		'genre' => 'required|max:255',
+		'imdb_rating' => 'required|numeric',
+		'lead_actor' => 'required|max:255',
+		];
+		$validator = Validator::make($request->all(), $rules);
+		if ($validator->fails()) {
+		    return response()->json($validator->errors(), 400);
+		}*/
 		
+		$show->update($request->all());
+		return response()->json($show, 200);
+	}
+	
+	public function showlistDelete(Request $request, $id) {
+		$show = Show::find($id);
+		if (is_null($show)) {
+			return response()->json(["message" => 'Record not found!'], 404);
+		}
+		$show->delete();
+		return response()->json(null, 204);
+	}
+	
 }
